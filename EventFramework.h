@@ -215,16 +215,17 @@ public:
     GOING_INACTIVE =(1<<3),	//8
   } States;
 
-  typedef enum/// input polarity
+  enum Polarity /// input polarity
   {
     ACT_LO,
     ACT_HI,
-  } Polarity;
+  };
 
-  typedef enum      /// valid digital input bits for an Arduino Uno
+  enum  DigitalBit  /// valid digital input bits for an Arduino Uno
   {                 // an enumerated value is chosen to
-      BIT_1 = 1,    // provide some guarantee that a valid
-      BIT_2,        // bit is specified.
+      BIT_0 = 0,    // provide some guarantee that a valid
+      BIT_1,        // bit is specified.
+      BIT_2,
       BIT_3,
       BIT_4,
       BIT_5,
@@ -242,7 +243,7 @@ public:
       AN_3,
       AN_4,
       AN_5,
-  } DigitalBit;
+  };
  
 
 private:
@@ -256,10 +257,13 @@ private:
   
 
 public:
-  Digital( const DigitalBit b,int d = 1, Polarity p = ACT_HI, uchar interest = (INACTIVE|ACTIVE)):
+  Digital( const DigitalBit b,int d = 1, Polarity p = ACT_HI, uchar interest = (INACTIVE|ACTIVE), bool pullup=false):
   debounce(d), state(INACTIVE), polarity(p), pin(b), interestMask(interest)
   {
-     pinMode(pin, INPUT);      // should this be done in setup?
+     if( pullup )
+         pinMode(pin, INPUT_PULLUP);      // should this be done in setup?
+     else
+         pinMode(pin, INPUT);      // should this be done in setup?
   };				// defaults: 1 ms debounce and active high polarity
                     // and interested transitions to inactive or active only
 
