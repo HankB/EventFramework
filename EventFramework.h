@@ -2,7 +2,9 @@
 #define EVENTFRAMEWORK_H
 #include <Arduino.h>
 
-// debugging 
+typedef unsigned long int ulong;
+typedef unsigned int uint;
+typedef unsigned char uchar;
 
 namespace efl { // event framework library
 
@@ -15,9 +17,6 @@ namespace efl { // event framework library
  * last item in the list points to the sentinel.
  */
 
-typedef unsigned long int ulong;
-typedef unsigned int uint;
-typedef unsigned char uchar;
 
 template<class Item> class LL {
 private:
@@ -196,6 +195,7 @@ public:
   void setPeriod(ulong p) {
     period=p;
   }
+  void reset() { setCounter(period); };
 
 };
 
@@ -207,13 +207,13 @@ public:
 class Digital
 {
 public:
-  typedef enum      /// interpreted state of the input
+  enum States       /// interpreted state of the input
   {
     INACTIVE =      (1<<0),	//1
     GOING_ACTIVE =  (1<<1),	//2
     ACTIVE =        (1<<2),	//4
     GOING_INACTIVE =(1<<3),	//8
-  } States;
+  };
 
   enum Polarity /// input polarity
   {
@@ -221,7 +221,7 @@ public:
     ACT_HI,
   };
 
-  enum  DigitalBit  /// valid digital input bits for an Arduino Uno
+  enum DigitalBit   /// valid digital input bits for an Arduino Uno
   {                 // an enumerated value is chosen to
       BIT_0 = 0,    // provide some guarantee that a valid
       BIT_1,        // bit is specified.
@@ -280,7 +280,7 @@ public:
           callback(0, state, oldState);
   };
   bool getSense() { return (polarity==ACT_HI)?digitalRead(pin):!digitalRead(pin); };
-  int getID() { return pin; };
+  int getID() { return pin; }; // should return efl::Digital::DigitalBit
   uint setDebounceCounter() { return debounceCounter = debounce; };
   uint getDebounce() { return debounce; };
   int decrementDebounce(uint delta) { return debounceCounter -= delta; };
